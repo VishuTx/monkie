@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monkey Detector AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Is it a Monkey? </h1>
+        <p>Upload an image to test your newly trained AI model.</p>
+
+        <div class="upload-area">
+            <input type="file" id="imageInput" accept="image/*">
+            <br>
+            <img id="imagePreview" src="" alt="Image Preview" style="display: none;">
+        </div>
+
+        <button id="predictBtn">Scan Image</button>
+
+        <div id="resultArea" class="result-box" style="display: none;">
+            <h2 id="predictionText"></h2>
+            <p id="confidenceText"></p>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
