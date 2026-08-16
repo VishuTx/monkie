@@ -25,13 +25,14 @@ The project is split into two main folders that work together:
 
 ---
 
-## Prerequisites
+## Prerequisites and SDK Version
 
 Make sure you have the following installed before starting:
 
 * Python 3.8 or newer
 * Node.js (version 18 or newer) and npm
-* Expo Go app installed on your mobile phone (available on Google Play Store for Android and Apple App Store for iOS)
+* **Expo SDK 57:** The mobile frontend is built on Expo SDK 57.
+* **Expo Go App:** To run the application on your mobile phone, download the Expo Go client corresponding to Expo SDK 57 from the official Expo releases website (`https://expo.dev/go`) or direct APK download links rather than standard app store builds.
 
 ---
 
@@ -96,7 +97,7 @@ npx expo start -c
 
 ## How to Run on Your Mobile Phone Using Expo Go
 
-1. Download and install **Expo Go** from the App Store on iOS or Google Play Store on Android.
+1. Download the Expo Go client for **Expo SDK 57** from the official Expo website (`https://expo.dev/go`) or direct APK download link and install it on your mobile phone.
 2. Connect your mobile phone to the exact same Wi-Fi network as your computer.
 3. Run `npx expo start` inside the `monkey-detector` folder.
 4. A QR code will be displayed in your terminal.
