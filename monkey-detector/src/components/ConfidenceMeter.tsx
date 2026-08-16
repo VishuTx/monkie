@@ -7,6 +7,7 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
+import { fontSF } from '../theme/typography';
 import { colors } from '../theme/colors';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
@@ -21,7 +22,7 @@ interface ConfidenceMeterProps {
 export const ConfidenceMeter: React.FC<ConfidenceMeterProps> = ({
   confidence,
   isMonkey,
-  size = 180,
+  size = 175,
   strokeWidth = 12,
 }) => {
   const radius = (size - strokeWidth) / 2;
@@ -30,7 +31,7 @@ export const ConfidenceMeter: React.FC<ConfidenceMeterProps> = ({
   const animatedProgress = useSharedValue(0);
   const [displayValue, setDisplayValue] = useState(0);
 
-  const strokeColor = isMonkey ? colors.amberAccent : colors.coldBlue;
+  const strokeColor = isMonkey ? colors.midGreen : colors.mint;
 
   useEffect(() => {
     animatedProgress.value = withTiming(confidence / 100, {
@@ -38,7 +39,6 @@ export const ConfidenceMeter: React.FC<ConfidenceMeterProps> = ({
       easing: Easing.out(Easing.cubic),
     });
 
-    // Animate the displayed number
     const duration = 1200;
     const startTime = Date.now();
     const interval = setInterval(() => {
@@ -66,7 +66,7 @@ export const ConfidenceMeter: React.FC<ConfidenceMeterProps> = ({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="rgba(255,255,255,0.06)"
+          stroke="rgba(107, 112, 92, 0.20)"
           strokeWidth={strokeWidth}
           fill="transparent"
         />
@@ -85,7 +85,7 @@ export const ConfidenceMeter: React.FC<ConfidenceMeterProps> = ({
         />
       </Svg>
       <View style={styles.centerContent}>
-        <Text style={[styles.percentText, { color: strokeColor }]}>{displayValue}%</Text>
+        <Text style={[styles.percentText, { color: colors.deepGreen }]}>{displayValue}%</Text>
         <Text style={styles.levelText}>{confidenceLabel} Confidence</Text>
       </View>
     </View>
@@ -97,21 +97,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
-    marginVertical: 10,
+    marginVertical: 8,
   },
   centerContent: {
     alignItems: 'center',
     justifyContent: 'center',
   },
   percentText: {
-    fontSize: 38,
-    fontFamily: 'Outfit_700Bold',
+    fontFamily: fontSF,
+    fontSize: 36,
+    fontWeight: '700',
     letterSpacing: -0.5,
   },
   levelText: {
-    fontSize: 12,
-    color: colors.textSecondary,
-    fontFamily: 'Outfit_400Regular',
+    fontFamily: fontSF,
+    fontSize: 13,
+    fontWeight: '400',
+    color: colors.olive,
     marginTop: 2,
   },
 });

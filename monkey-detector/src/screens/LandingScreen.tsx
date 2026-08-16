@@ -4,10 +4,9 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Dimensions,
 } from 'react-native';
 import { BlurView } from 'expo-blur';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -15,17 +14,14 @@ import Animated, {
   withDelay,
   Easing,
 } from 'react-native-reanimated';
+import { fontSF } from '../theme/typography';
 import { colors } from '../theme/colors';
-
-const { width: W, height: H } = Dimensions.get('window');
 
 interface LandingScreenProps {
   onEnter: () => void;
 }
 
 export const LandingScreen: React.FC<LandingScreenProps> = ({ onEnter }) => {
-  const insets = useSafeAreaInsets();
-
   // Staggered entrance animations
   const logoOpacity = useSharedValue(0);
   const logoY = useSharedValue(20);
@@ -58,9 +54,6 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onEnter }) => {
 
   return (
     <View style={styles.root}>
-      {/* Subtle grid overlay */}
-      <View style={styles.gridOverlay} pointerEvents="none" />
-
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.content}>
 
@@ -71,31 +64,27 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onEnter }) => {
                 <Text style={styles.emblemChar}>P</Text>
               </View>
             </View>
-            <View style={styles.emblemLine} />
             <Text style={styles.versionTag}>SECURITY SUITE · v1.0</Text>
           </Animated.View>
 
           {/* Main glass panel */}
           <Animated.View style={[styles.glassPanel, cardStyle]}>
-            <BlurView intensity={30} tint="dark" style={StyleSheet.absoluteFill} />
-            {/* Glass highlight at top */}
-            <View style={styles.glassHighlight} />
+            <BlurView intensity={35} tint="light" style={StyleSheet.absoluteFill} />
 
             <View style={styles.panelContent}>
               <Text style={styles.panelLabel}>SYSTEM IDENTIFICATION</Text>
               <Text style={styles.panelTitle}>Primate{'\n'}Deterrence{'\n'}System</Text>
               <View style={styles.divider} />
               <Text style={styles.panelDesc}>
-                AI-powered hostel security monitoring.{'\n'}
-                Automatic primate intrusion detection{'\n'}
-                using deep learning computer vision.
+                AI-powered hostel security & wildlife monitoring.{'\n'}
+                Automatic primate intrusion detection using deep learning computer vision.
               </Text>
 
               {/* Spec rows */}
               <View style={styles.specGrid}>
                 <SpecItem label="Model" value="MobileNetV2" />
                 <SpecItem label="Input" value="224 × 224 px" />
-                <SpecItem label="Accuracy" value="Binary CNN" />
+                <SpecItem label="Classifier" value="Binary CNN" />
                 <SpecItem label="Latency" value="Real-time" />
               </View>
             </View>
@@ -103,11 +92,11 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onEnter }) => {
 
           {/* Enter button */}
           <Animated.View style={[styles.btnWrap, btnStyle]}>
-            <TouchableOpacity style={styles.enterBtn} activeOpacity={0.82} onPress={onEnter}>
+            <TouchableOpacity style={styles.enterBtn} activeOpacity={0.85} onPress={onEnter}>
               <Text style={styles.enterBtnText}>Enter System</Text>
               <Text style={styles.enterBtnArrow}>→</Text>
             </TouchableOpacity>
-            <Text style={styles.footerNote}>Authorized personnel only</Text>
+            <Text style={styles.footerNote}>Hostel & Campus Wildlife Protection</Text>
           </Animated.View>
 
         </View>
@@ -126,25 +115,27 @@ const SpecItem = ({ label, value }: { label: string; value: string }) => (
 const specStyles = StyleSheet.create({
   item: {
     width: '48%',
-    backgroundColor: 'rgba(255,255,255,0.04)',
+    backgroundColor: 'rgba(255, 255, 255, 0.60)',
     borderRadius: 10,
-    padding: 12,
+    padding: 10,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.07)',
+    borderColor: 'rgba(107, 112, 92, 0.20)',
   },
   label: {
+    fontFamily: fontSF,
     fontSize: 10,
-    color: colors.textMuted,
-    fontFamily: 'Outfit_400Regular',
+    fontWeight: '600',
+    color: colors.olive,
     letterSpacing: 0.6,
     textTransform: 'uppercase',
-    marginBottom: 3,
+    marginBottom: 2,
   },
   value: {
+    fontFamily: fontSF,
     fontSize: 13,
-    color: colors.textPrimary,
-    fontFamily: 'Outfit_600SemiBold',
+    fontWeight: '700',
+    color: colors.deepGreen,
   },
 });
 
@@ -153,12 +144,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  gridOverlay: {
-    ...StyleSheet.absoluteFill,
-    // Subtle radial glow at center-top
-    backgroundColor: 'transparent',
-    borderRadius: 999,
-  },
   safeArea: {
     flex: 1,
   },
@@ -166,7 +151,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 24,
     justifyContent: 'space-between',
-    paddingTop: 20,
+    paddingTop: 16,
     paddingBottom: 20,
   },
 
@@ -176,100 +161,88 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   emblemRing: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     borderWidth: 1.5,
-    borderColor: colors.amberAccent,
+    borderColor: colors.midGreen,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(201, 134, 26, 0.08)',
-    marginBottom: 14,
+    backgroundColor: colors.paleMint,
+    marginBottom: 10,
   },
   emblemInner: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: colors.amberGlow,
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    backgroundColor: colors.midGreen,
     alignItems: 'center',
     justifyContent: 'center',
   },
   emblemChar: {
-    fontSize: 24,
-    fontFamily: 'Cinzel_700Bold',
-    color: colors.amberLight,
-    letterSpacing: 2,
-  },
-  emblemLine: {
-    width: 1,
-    height: 20,
-    backgroundColor: 'rgba(201, 134, 26, 0.3)',
-    marginBottom: 10,
+    fontFamily: fontSF,
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#fff',
   },
   versionTag: {
-    fontSize: 10,
-    color: colors.textMuted,
-    fontFamily: 'Outfit_400Regular',
-    letterSpacing: 2,
-    textTransform: 'uppercase',
+    fontFamily: fontSF,
+    fontSize: 11,
+    fontWeight: '600',
+    color: colors.olive,
+    letterSpacing: 1.5,
   },
 
   // Glass Panel
   glassPanel: {
-    borderRadius: 20,
+    borderRadius: 22,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.10)',
-    backgroundColor: 'rgba(18, 18, 28, 0.60)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.5,
-    shadowRadius: 24,
-    elevation: 12,
+    borderColor: 'rgba(107, 112, 92, 0.25)',
+    backgroundColor: 'rgba(216, 243, 220, 0.65)',
+    shadowColor: colors.deepGreen,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.10,
+    shadowRadius: 16,
+    elevation: 6,
     flex: 1,
-    marginVertical: 18,
-  },
-  glassHighlight: {
-    position: 'absolute',
-    top: 0,
-    left: 24,
-    right: 24,
-    height: 1,
-    backgroundColor: 'rgba(255,255,255,0.20)',
-    zIndex: 2,
+    marginVertical: 16,
   },
   panelContent: {
-    padding: 26,
-    zIndex: 1,
+    padding: 24,
     flex: 1,
+    justifyContent: 'space-between',
   },
   panelLabel: {
-    fontSize: 10,
-    color: colors.amberAccent,
-    fontFamily: 'Outfit_400Regular',
-    letterSpacing: 2.5,
+    fontFamily: fontSF,
+    fontSize: 11,
+    fontWeight: '700',
+    color: colors.midGreen,
+    letterSpacing: 1.5,
     textTransform: 'uppercase',
-    marginBottom: 14,
+    marginBottom: 8,
   },
   panelTitle: {
-    fontSize: 38,
-    fontFamily: 'Cinzel_700Bold',
-    color: colors.textPrimary,
-    lineHeight: 46,
-    letterSpacing: 0.5,
-    marginBottom: 18,
+    fontFamily: fontSF,
+    fontSize: 32,
+    fontWeight: '700',
+    color: colors.deepGreen,
+    lineHeight: 36,
+    letterSpacing: -0.5,
+    marginBottom: 10,
   },
   divider: {
     height: 1,
-    backgroundColor: 'rgba(201, 134, 26, 0.25)',
-    marginBottom: 16,
+    backgroundColor: 'rgba(107, 112, 92, 0.20)',
+    marginBottom: 10,
   },
   panelDesc: {
-    fontSize: 13,
-    color: colors.textSecondary,
-    fontFamily: 'Outfit_400Regular',
+    fontFamily: fontSF,
+    fontSize: 14,
+    fontWeight: '400',
+    color: colors.olive,
     lineHeight: 20,
-    marginBottom: 20,
+    marginBottom: 12,
   },
   specGrid: {
     flexDirection: 'row',
@@ -285,34 +258,36 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.amberAccent,
+    backgroundColor: colors.midGreen,
     borderRadius: 16,
-    paddingVertical: 18,
+    paddingVertical: 15,
     paddingHorizontal: 40,
     width: '100%',
-    marginBottom: 12,
-    shadowColor: colors.amberAccent,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.45,
-    shadowRadius: 14,
-    elevation: 8,
+    marginBottom: 10,
+    shadowColor: colors.deepGreen,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 10,
+    elevation: 6,
     gap: 10,
   },
   enterBtnText: {
+    fontFamily: fontSF,
     fontSize: 16,
-    fontFamily: 'Outfit_700Bold',
+    fontWeight: '700',
     color: '#fff',
-    letterSpacing: 0.4,
+    letterSpacing: 0.2,
   },
   enterBtnArrow: {
-    fontSize: 18,
-    color: 'rgba(255,255,255,0.85)',
-    fontFamily: 'Outfit_600SemiBold',
+    fontFamily: fontSF,
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#fff',
   },
   footerNote: {
-    fontSize: 11,
-    color: colors.textMuted,
-    fontFamily: 'Outfit_400Regular',
-    letterSpacing: 0.5,
+    fontFamily: fontSF,
+    fontSize: 12,
+    fontWeight: '400',
+    color: colors.olive,
   },
 });

@@ -1,58 +1,59 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
+import { colors } from './colors';
+
+export const fontSF = Platform.select({
+  ios: 'System',
+  android: 'sans-serif',
+  default: 'System',
+});
 
 export const typography = StyleSheet.create({
   heroHeading: {
-    fontFamily: 'Cinzel_700Bold',
-    fontSize: 28,
+    fontFamily: fontSF,
+    fontSize: 30,
     fontWeight: '700',
-    color: '#f0f0f5',
-    letterSpacing: 1.5,
+    color: colors.deepGreen,
+    letterSpacing: -0.5,
     textAlign: 'center',
-    textTransform: 'uppercase',
   },
   sectionHeading: {
-    fontFamily: 'Cinzel_700Bold',
+    fontFamily: fontSF,
     fontSize: 20,
     fontWeight: '700',
-    color: '#f0f0f5',
-    letterSpacing: 1.2,
-    textTransform: 'uppercase',
+    color: colors.deepGreen,
+    letterSpacing: -0.3,
   },
   cardTitle: {
-    fontFamily: 'Cinzel_700Bold',
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#f0f0f5',
-    letterSpacing: 1,
+    fontFamily: fontSF,
+    fontSize: 17,
+    fontWeight: '600',
+    color: colors.deepGreen,
   },
-  latinMicrocopy: {
-    fontFamily: 'Cinzel_400Regular',
+  subtitleItalic: {
+    fontFamily: fontSF,
     fontSize: 14,
-    color: '#c9861a',
-    letterSpacing: 1.1,
-    textTransform: 'uppercase',
-  },
-  englishSubtitle: {
-    fontSize: 12,
+    fontWeight: '400',
     fontStyle: 'italic',
-    color: '#a0a0b0',
-    marginTop: 2,
+    color: colors.olive,
   },
   bodyText: {
+    fontFamily: fontSF,
     fontSize: 14,
-    color: '#f0f0f5',
-    lineHeight: 20,
+    fontWeight: '400',
+    color: colors.deepGreen,
+    lineHeight: 21,
   },
   captionText: {
+    fontFamily: fontSF,
     fontSize: 12,
+    fontWeight: '400',
     fontStyle: 'italic',
-    color: '#6e6e80',
+    color: colors.olive,
   },
   buttonText: {
-    fontFamily: 'Cinzel_700Bold',
-    fontSize: 16,
+    fontFamily: fontSF,
+    fontSize: 15,
     fontWeight: '700',
-    letterSpacing: 1.2,
-    textTransform: 'uppercase',
+    letterSpacing: -0.2,
   },
 });

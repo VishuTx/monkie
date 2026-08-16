@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,156 +8,157 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withDelay,
+  withSpring,
+  Easing,
+} from 'react-native-reanimated';
+import { fontSF } from '../theme/typography';
 import { colors } from '../theme/colors';
 
 interface HomeScreenProps {
   onSelectPickGallery: () => void;
   onSelectCamera: () => void;
   onOpenHistory: () => void;
+  onOpenAbout: () => void;
 }
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
   onSelectPickGallery,
   onSelectCamera,
   onOpenHistory,
+  onOpenAbout,
 }) => {
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.headerLabel}>SECURITY SYSTEM</Text>
-          <Text style={styles.headerTitle}>Command Centre</Text>
-          <Text style={styles.headerSub}>Choose a scan method to begin detection</Text>
+          <Text style={styles.mainTitle}>Primate Deterrence System</Text>
+          <Text style={styles.subTitle}>Hostel & Campus Wildlife Conflict Management</Text>
         </View>
 
-        {/* ── Primary Actions ── */}
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>SCAN INPUT</Text>
+        {/* Navigation Grid */}
+        <View style={styles.gridContainer}>
+          <GridCard
+            badge="01"
+            title="Upload Image"
+            subtitle="Analyze photo from device gallery"
+            onPress={onSelectPickGallery}
+            delay={100}
+            accentColor={colors.midGreen}
+          />
 
-          {/* Gallery Upload */}
-          <GlassButton onPress={onSelectPickGallery} variant="amber">
-            <View style={styles.btnInner}>
-              <View style={styles.btnTextGroup}>
-                <Text style={[styles.btnTitle, { color: colors.amberLight }]}>Upload Image</Text>
-                <Text style={styles.btnSub}>Select a photo from your gallery</Text>
-              </View>
-              <Text style={[styles.btnArrow, { color: colors.amberAccent }]}>→</Text>
-            </View>
-          </GlassButton>
+          <GridCard
+            badge="02"
+            title="Live Camera"
+            subtitle="Capture & scan real-time photo"
+            onPress={onSelectCamera}
+            delay={220}
+            accentColor={colors.deepGreen}
+          />
 
-          {/* Live Camera */}
-          <GlassButton onPress={onSelectCamera} variant="default" style={styles.cameraBtn}>
-            <View style={styles.btnInner}>
-              <View style={styles.btnTextGroup}>
-                <Text style={styles.btnTitle}>Live Camera</Text>
-                <Text style={styles.btnSub}>Take a real-time photo for scanning</Text>
-              </View>
-              <Text style={styles.btnArrow}>→</Text>
-            </View>
-          </GlassButton>
-        </View>
+          <GridCard
+            badge="03"
+            title="Detection History"
+            subtitle="Review past incident logs & scores"
+            onPress={onOpenHistory}
+            delay={340}
+            accentColor={colors.mint}
+          />
 
-        {/* ── History ── */}
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>RECORDS</Text>
-
-          <GlassButton onPress={onOpenHistory} variant="subtle">
-            <View style={styles.btnInner}>
-              <View style={styles.btnTextGroup}>
-                <Text style={styles.btnTitle}>Detection History</Text>
-                <Text style={styles.btnSub}>View past scan results and logs</Text>
-              </View>
-              <Text style={[styles.btnArrow, { color: colors.coldBlue }]}>→</Text>
-            </View>
-          </GlassButton>
-        </View>
-
-        {/* ── Info Panel ── */}
-        <View style={styles.infoPanel}>
-          <BlurView intensity={25} tint="dark" style={StyleSheet.absoluteFill} />
-          <View style={styles.infoPanelHighlight} />
-          <View style={styles.infoPanelContent}>
-            <Text style={styles.infoPanelTitle}>About This System</Text>
-            <Text style={styles.infoPanelText}>
-              Powered by a MobileNetV2 deep learning model trained on primate vs. background images.
-              Upload or capture any image to instantly detect primate presence with a confidence score.
-            </Text>
-          </View>
+          <GridCard
+            badge="04"
+            title="About & Vision"
+            subtitle="Motive, capabilities & future roadmap"
+            onPress={onOpenAbout}
+            delay={460}
+            accentColor={colors.olive}
+          />
         </View>
 
         {/* Footer */}
-        <Text style={styles.footer}>Primate Deterrence System · v1.0</Text>
+        <Text style={styles.footerText}>Primate Deterrence System · v1.0</Text>
+
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-/* ─── GlassButton sub-component ─── */
-interface GlassButtonProps {
-  children: React.ReactNode;
+interface GridCardProps {
+  badge: string;
+  title: string;
+  subtitle: string;
   onPress: () => void;
-  variant?: 'amber' | 'default' | 'subtle';
-  style?: object;
+  delay: number;
+  accentColor: string;
 }
 
-const GlassButton: React.FC<GlassButtonProps> = ({ children, onPress, variant = 'default', style }) => {
-  const borderColor =
-    variant === 'amber'
-      ? 'rgba(201, 134, 26, 0.40)'
-      : variant === 'subtle'
-      ? 'rgba(74, 144, 226, 0.25)'
-      : 'rgba(255,255,255,0.10)';
+const GridCard: React.FC<GridCardProps> = ({
+  badge,
+  title,
+  subtitle,
+  onPress,
+  delay,
+  accentColor,
+}) => {
+  const opacity = useSharedValue(0);
+  const translateY = useSharedValue(24);
+  const scale = useSharedValue(1);
 
-  const bg =
-    variant === 'amber'
-      ? 'rgba(201, 134, 26, 0.10)'
-      : variant === 'subtle'
-      ? 'rgba(74, 144, 226, 0.07)'
-      : 'rgba(255,255,255,0.04)';
+  useEffect(() => {
+    opacity.value = withDelay(delay, withTiming(1, { duration: 600, easing: Easing.out(Easing.cubic) }));
+    translateY.value = withDelay(delay, withTiming(0, { duration: 600, easing: Easing.out(Easing.cubic) }));
+  }, [delay]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [
+      { translateY: translateY.value },
+      { scale: scale.value },
+    ],
+  }));
+
+  const handlePressIn = () => {
+    scale.value = withSpring(0.96, { damping: 14, stiffness: 180 });
+  };
+
+  const handlePressOut = () => {
+    scale.value = withSpring(1, { damping: 14, stiffness: 180 });
+  };
 
   return (
-    <TouchableOpacity
-      style={[glassBtn.wrap, { borderColor, backgroundColor: bg }, style]}
-      activeOpacity={0.78}
-      onPress={onPress}
-    >
-      <BlurView intensity={20} tint="dark" style={StyleSheet.absoluteFill} />
-      {/* Glass top highlight */}
-      <View style={[glassBtn.highlight, { backgroundColor: variant === 'amber' ? 'rgba(201,134,26,0.12)' : 'rgba(255,255,255,0.06)' }]} />
-      <View style={glassBtn.content}>{children}</View>
-    </TouchableOpacity>
+    <Animated.View style={[styles.cardWrapper, animatedStyle]}>
+      <TouchableOpacity
+        style={styles.cardTouch}
+        activeOpacity={0.88}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        onPress={onPress}
+      >
+        <BlurView intensity={35} tint="light" style={StyleSheet.absoluteFill} />
+        
+        {/* Accent indicator bar */}
+        <View style={[styles.cardAccentBar, { backgroundColor: accentColor }]} />
+
+        <View style={styles.cardContent}>
+          <View style={styles.badgePill}>
+            <Text style={[styles.badgeText, { color: accentColor }]}>{badge}</Text>
+          </View>
+          <Text style={styles.cardTitle}>{title}</Text>
+          <Text style={styles.cardSub}>{subtitle}</Text>
+          <View style={styles.arrowRow}>
+            <Text style={[styles.arrowText, { color: accentColor }]}>Explore →</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    </Animated.View>
   );
 };
-
-const glassBtn = StyleSheet.create({
-  wrap: {
-    borderRadius: 16,
-    borderWidth: 1,
-    overflow: 'hidden',
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    elevation: 5,
-  },
-  highlight: {
-    position: 'absolute',
-    top: 0,
-    left: 16,
-    right: 16,
-    height: 1,
-    zIndex: 2,
-  },
-  content: {
-    padding: 20,
-    zIndex: 1,
-  },
-});
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -167,117 +168,118 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: 20,
     paddingTop: 28,
-    paddingBottom: 50,
+    paddingBottom: 40,
   },
 
   // Header
   header: {
-    marginBottom: 36,
+    alignItems: 'center',
+    marginBottom: 32,
   },
-  headerLabel: {
-    fontSize: 10,
-    fontFamily: 'Outfit_400Regular',
-    color: colors.amberAccent,
-    letterSpacing: 2.5,
-    textTransform: 'uppercase',
-    marginBottom: 8,
+  mainTitle: {
+    fontFamily: fontSF,
+    fontSize: 28,
+    fontWeight: '700',
+    color: colors.deepGreen,
+    textAlign: 'center',
+    letterSpacing: -0.5,
+    marginBottom: 6,
   },
-  headerTitle: {
-    fontSize: 32,
-    fontFamily: 'Outfit_700Bold',
-    color: colors.textPrimary,
-    lineHeight: 38,
-    marginBottom: 8,
-  },
-  headerSub: {
+  subTitle: {
+    fontFamily: fontSF,
     fontSize: 14,
-    fontFamily: 'Outfit_400Regular',
-    color: colors.textSecondary,
+    fontWeight: '400',
+    color: colors.olive,
+    textAlign: 'center',
   },
 
-  // Sections
-  section: {
+  // Grid
+  gridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: 16,
     marginBottom: 28,
   },
-  sectionLabel: {
-    fontSize: 10,
-    fontFamily: 'Outfit_400Regular',
-    color: colors.textMuted,
-    letterSpacing: 2,
-    textTransform: 'uppercase',
-    marginBottom: 12,
-  },
-
-  // Button internals
-  btnInner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  btnTextGroup: {
-    flex: 1,
-    marginRight: 12,
-  },
-  btnTitle: {
-    fontSize: 16,
-    fontFamily: 'Outfit_600SemiBold',
-    color: colors.textPrimary,
-    marginBottom: 4,
-  },
-  btnSub: {
-    fontSize: 12,
-    fontFamily: 'Outfit_400Regular',
-    color: colors.textSecondary,
-  },
-  btnArrow: {
-    fontSize: 20,
-    color: colors.textSecondary,
-    fontFamily: 'Outfit_400Regular',
-  },
-  cameraBtn: {
-    marginBottom: 0,
-  },
-
-  // Info panel
-  infoPanel: {
-    borderRadius: 16,
+  cardWrapper: {
+    width: '47.5%',
+    borderRadius: 18,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.07)',
-    backgroundColor: 'rgba(18,18,28,0.5)',
-    marginBottom: 30,
+    borderColor: 'rgba(107, 112, 92, 0.25)',
+    backgroundColor: 'rgba(216, 243, 220, 0.65)',
+    shadowColor: colors.deepGreen,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    elevation: 3,
   },
-  infoPanelHighlight: {
+  cardTouch: {
+    padding: 16,
+    minHeight: 165,
+    justifyContent: 'space-between',
+  },
+  cardAccentBar: {
     position: 'absolute',
-    top: 0,
-    left: 20,
-    right: 20,
-    height: 1,
-    backgroundColor: 'rgba(255,255,255,0.10)',
+    left: 0,
+    top: 16,
+    bottom: 16,
+    width: 3.5,
+    borderTopRightRadius: 3,
+    borderBottomRightRadius: 3,
   },
-  infoPanelContent: {
-    padding: 20,
-    zIndex: 1,
+  cardContent: {
+    flex: 1,
+    justifyContent: 'space-between',
   },
-  infoPanelTitle: {
+  badgePill: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(107, 112, 92, 0.20)',
+  },
+  badgeText: {
+    fontFamily: fontSF,
     fontSize: 13,
-    fontFamily: 'Outfit_600SemiBold',
-    color: colors.textPrimary,
-    marginBottom: 8,
+    fontWeight: '700',
   },
-  infoPanelText: {
+  cardTitle: {
+    fontFamily: fontSF,
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.deepGreen,
+    marginBottom: 4,
+  },
+  cardSub: {
+    fontFamily: fontSF,
     fontSize: 12,
-    fontFamily: 'Outfit_400Regular',
-    color: colors.textSecondary,
-    lineHeight: 18,
+    fontWeight: '400',
+    color: colors.olive,
+    lineHeight: 16,
+    marginBottom: 10,
+  },
+  arrowRow: {
+    marginTop: 'auto',
+    alignSelf: 'flex-start',
+  },
+  arrowText: {
+    fontFamily: fontSF,
+    fontSize: 13,
+    fontWeight: '600',
   },
 
   // Footer
-  footer: {
+  footerText: {
     textAlign: 'center',
-    fontSize: 11,
-    fontFamily: 'Outfit_400Regular',
-    color: colors.textMuted,
-    letterSpacing: 0.5,
+    fontFamily: fontSF,
+    fontSize: 12,
+    fontWeight: '400',
+    color: colors.olive,
+    letterSpacing: 0.3,
   },
 });

@@ -21,11 +21,13 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { GlassCard } from '../components/GlassCard';
+import { BackButton } from '../components/BackButton';
 import { manualUploadSource } from '../services/detectionSource/ManualUploadSource';
 import { DetectionEvent } from '../types/DetectionEvent';
+import { fontSF } from '../theme/typography';
 import { colors } from '../theme/colors';
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface DetectScreenProps {
   initialImageUri?: string | null;
@@ -152,23 +154,23 @@ export const DetectScreen: React.FC<DetectScreenProps> = ({
   if (cameraMode) {
     return (
       <View style={styles.cameraFullScreen}>
-        {/* Camera feed — NO children allowed */}
+        {/* Camera feed */}
         <CameraView
           ref={cameraRef}
           style={StyleSheet.absoluteFill}
           facing={facing}
         />
 
-        {/* All overlays sit outside CameraView in a sibling absolute View */}
+        {/* Overlay UI */}
         <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
           {/* Top Controls */}
           <View style={[styles.cameraTopBar, { paddingTop: insets.top + 10 }]}>
             <TouchableOpacity style={styles.camTopBtn} onPress={() => setCameraMode(false)}>
-              <Text style={styles.camTopBtnText}>✕  Close</Text>
+              <Text style={styles.camTopBtnText}>Close Scanner</Text>
             </TouchableOpacity>
             <View style={styles.camTitlePill}>
               <View style={styles.recDot} />
-              <Text style={styles.camTitleText}>Live Scanner</Text>
+              <Text style={styles.camTitleText}>Live Feed</Text>
             </View>
             <TouchableOpacity
               style={styles.camTopBtn}
@@ -187,7 +189,7 @@ export const DetectScreen: React.FC<DetectScreenProps> = ({
               <View style={[styles.corner, styles.cornerBR]} />
               <Animated.View style={[styles.scanLine, animatedScanLineStyle]} />
             </View>
-            <Text style={styles.viewfinderHint}>Position subject within frame</Text>
+            <Text style={styles.viewfinderHint}>Position primate subject within frame</Text>
           </View>
 
           {/* Bottom Controls */}
@@ -212,12 +214,10 @@ export const DetectScreen: React.FC<DetectScreenProps> = ({
   // ─────────────────────────────────
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* Header */}
+      {/* Header with Global BackButton */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={onBack}>
-          <Text style={styles.backText}>‹ Back</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Image Scan</Text>
+        <BackButton onPress={onBack} title="Back" />
+        <Text style={styles.headerTitle}>Detection Scanner</Text>
         <View style={{ width: 60 }} />
       </View>
 
@@ -226,7 +226,7 @@ export const DetectScreen: React.FC<DetectScreenProps> = ({
         <View style={styles.loadingOverlay}>
           <GlassCard style={styles.loadingCard}>
             <Animated.View style={[styles.analyzeRing, animatedRingStyle]}>
-              <ActivityIndicator size="large" color={colors.amberAccent} />
+              <ActivityIndicator size="large" color={colors.midGreen} />
             </Animated.View>
             <Text style={styles.loadingTitle}>Scanning Image...</Text>
             <Text style={styles.loadingSubtitle}>Running primate detection model</Text>
@@ -240,9 +240,11 @@ export const DetectScreen: React.FC<DetectScreenProps> = ({
           <Image source={{ uri: selectedImageUri }} style={styles.previewImage} resizeMode="cover" />
         ) : (
           <View style={styles.placeholderContainer}>
-            <Text style={styles.placeholderIcon}>📸</Text>
+            <View style={styles.placeholderRing}>
+              <Text style={styles.placeholderTag}>SCAN</Text>
+            </View>
             <Text style={styles.placeholderTitle}>No Image Selected</Text>
-            <Text style={styles.placeholderSub}>Choose from gallery or take a photo to begin</Text>
+            <Text style={styles.placeholderSub}>Select a gallery photo or capture a live photo to scan</Text>
           </View>
         )}
       </View>
@@ -252,13 +254,11 @@ export const DetectScreen: React.FC<DetectScreenProps> = ({
         {/* Source Row */}
         <View style={styles.sourceRow}>
           <TouchableOpacity style={styles.sourceButton} onPress={handlePickGallery} activeOpacity={0.8}>
-            <Text style={styles.sourceEmoji}>🖼️</Text>
-            <Text style={styles.sourceLabel}>Gallery</Text>
+            <Text style={styles.sourceLabel}>Select Gallery Photo</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={[styles.sourceButton, styles.cameraSourceButton]} onPress={openCamera} activeOpacity={0.8}>
-            <Text style={styles.sourceEmoji}>📷</Text>
-            <Text style={[styles.sourceLabel, { color: colors.amberLight }]}>Camera</Text>
+            <Text style={[styles.sourceLabel, { color: colors.deepGreen }]}>Open Live Camera</Text>
           </TouchableOpacity>
         </View>
 
@@ -290,13 +290,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,0.07)',
+    borderBottomColor: 'rgba(107, 112, 92, 0.15)',
   },
-  backButton: { padding: 4 },
-  backText: { fontSize: 16, color: colors.amberAccent, fontFamily: 'Outfit_600SemiBold' },
-  headerTitle: { fontSize: 16, fontFamily: 'Outfit_700Bold', color: colors.textPrimary, letterSpacing: 0.3 },
+  headerTitle: {
+    fontFamily: fontSF,
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.deepGreen,
+  },
 
   // ── Preview ──
   previewArea: {
@@ -304,15 +307,32 @@ const styles = StyleSheet.create({
     margin: 16,
     borderRadius: 18,
     overflow: 'hidden',
-    backgroundColor: colors.surface,
+    backgroundColor: 'rgba(216, 243, 220, 0.45)',
     borderWidth: 1,
-    borderColor: colors.surfaceGlassBorder,
+    borderColor: 'rgba(107, 112, 92, 0.20)',
   },
   previewImage: { width: '100%', height: '100%' },
   placeholderContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 30 },
-  placeholderIcon: { fontSize: 54, marginBottom: 14 },
-  placeholderTitle: { fontSize: 17, fontFamily: 'Outfit_700Bold', color: colors.textPrimary, marginBottom: 8 },
-  placeholderSub: { fontSize: 13, fontFamily: 'Outfit_400Regular', color: colors.textSecondary, textAlign: 'center', lineHeight: 19 },
+  placeholderRing: {
+    width: 54,
+    height: 54,
+    borderRadius: 27,
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: 'rgba(107, 112, 92, 0.20)',
+  },
+  placeholderTag: {
+    fontFamily: fontSF,
+    fontSize: 11,
+    fontWeight: '700',
+    color: colors.midGreen,
+    letterSpacing: 1,
+  },
+  placeholderTitle: { fontFamily: fontSF, fontSize: 18, fontWeight: '700', color: colors.deepGreen, marginBottom: 6 },
+  placeholderSub: { fontFamily: fontSF, fontSize: 13, fontWeight: '400', color: colors.olive, textAlign: 'center', lineHeight: 18 },
 
   // ── Bottom Panel ──
   bottomPanel: {
@@ -320,7 +340,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     paddingTop: 14,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(255,255,255,0.07)',
+    borderTopColor: 'rgba(107, 112, 92, 0.15)',
   },
   sourceRow: { flexDirection: 'row', gap: 12, marginBottom: 14 },
   sourceButton: {
@@ -328,60 +348,56 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 13,
-    borderRadius: 13,
-    backgroundColor: colors.surfaceGlass,
+    paddingVertical: 12,
+    borderRadius: 14,
+    backgroundColor: 'rgba(216, 243, 220, 0.65)',
     borderWidth: 1,
-    borderColor: colors.surfaceGlassBorder,
-    gap: 8,
+    borderColor: 'rgba(107, 112, 92, 0.25)',
   },
   cameraSourceButton: {
-    backgroundColor: 'rgba(201, 134, 26, 0.1)',
-    borderColor: colors.borderThin,
+    backgroundColor: 'rgba(64, 145, 108, 0.15)',
+    borderColor: colors.borderClear,
   },
-  sourceEmoji: { fontSize: 18 },
-  sourceLabel: { fontSize: 14, fontFamily: 'Outfit_600SemiBold', color: colors.textPrimary },
+  sourceLabel: { fontFamily: fontSF, fontSize: 14, fontWeight: '600', color: colors.deepGreen },
   scanButton: {
-    backgroundColor: colors.amberAccent,
+    backgroundColor: colors.midGreen,
     borderRadius: 14,
-    paddingVertical: 16,
+    paddingVertical: 15,
     alignItems: 'center',
-    shadowColor: colors.amberAccent,
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.4,
-    shadowRadius: 10,
-    elevation: 5,
+    shadowColor: colors.deepGreen,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  scanButtonDisabled: { backgroundColor: colors.textMuted, shadowOpacity: 0 },
-  scanButtonText: { fontSize: 16, fontFamily: 'Outfit_700Bold', color: '#fff', letterSpacing: 0.4 },
+  scanButtonDisabled: { backgroundColor: colors.olive, opacity: 0.6, shadowOpacity: 0 },
+  scanButtonText: { fontFamily: fontSF, fontSize: 16, fontWeight: '700', color: '#fff', letterSpacing: 0.2 },
 
   // ── Loading Overlay ──
   loadingOverlay: {
     ...StyleSheet.absoluteFill,
     zIndex: 99,
-    backgroundColor: colors.overlay,
+    backgroundColor: 'rgba(27, 67, 50, 0.45)',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 30,
   },
-  loadingCard: { width: '100%', alignItems: 'center', paddingVertical: 40 },
+  loadingCard: { width: '100%', alignItems: 'center', paddingVertical: 36 },
   analyzeRing: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     borderWidth: 2,
-    borderColor: colors.amberAccent,
+    borderColor: colors.midGreen,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 22,
-    backgroundColor: colors.amberGlow,
+    marginBottom: 16,
+    backgroundColor: colors.paleMint,
   },
-  loadingTitle: { fontSize: 18, fontFamily: 'Outfit_700Bold', color: colors.textPrimary, marginBottom: 6 },
-  loadingSubtitle: { fontSize: 13, fontFamily: 'Outfit_400Regular', color: colors.textSecondary },
+  loadingTitle: { fontFamily: fontSF, fontSize: 20, fontWeight: '700', color: colors.deepGreen, marginBottom: 4 },
+  loadingSubtitle: { fontFamily: fontSF, fontSize: 13, fontWeight: '400', color: colors.olive },
 
-  // ────────────────────────────────
-  // FULL-SCREEN CAMERA STYLES
-  // ────────────────────────────────
+  // ── FULL-SCREEN CAMERA STYLES ──
   cameraFullScreen: {
     flex: 1,
     backgroundColor: '#000',
@@ -394,16 +410,16 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   camTopBtn: {
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
     paddingHorizontal: 14,
     paddingVertical: 7,
     borderRadius: 20,
   },
-  camTopBtnText: { color: '#fff', fontSize: 13, fontWeight: '600' },
+  camTopBtnText: { color: '#fff', fontSize: 13, fontFamily: fontSF, fontWeight: '600' },
   camTitlePill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
     paddingHorizontal: 14,
     paddingVertical: 7,
     borderRadius: 20,
@@ -413,9 +429,9 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#e74c3c',
+    backgroundColor: colors.mint,
   },
-  camTitleText: { color: '#fff', fontSize: 13, fontWeight: '600' },
+  camTitleText: { color: '#fff', fontSize: 13, fontFamily: fontSF, fontWeight: '600' },
 
   // Viewfinder
   viewfinderWrapper: {
@@ -433,7 +449,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: CORNER_SIZE,
     height: CORNER_SIZE,
-    borderColor: '#fff',
+    borderColor: colors.mint,
   },
   cornerTL: { top: 0, left: 0, borderTopWidth: CORNER_THICKNESS, borderLeftWidth: CORNER_THICKNESS },
   cornerTR: { top: 0, right: 0, borderTopWidth: CORNER_THICKNESS, borderRightWidth: CORNER_THICKNESS },
@@ -444,18 +460,15 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 2,
-    backgroundColor: colors.amberAccent,
-    opacity: 0.75,
-    shadowColor: colors.amberAccent,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 1,
-    shadowRadius: 6,
+    backgroundColor: colors.mint,
+    opacity: 0.85,
   },
   viewfinderHint: {
-    color: 'rgba(255,255,255,0.55)',
-    fontSize: 12,
+    color: '#fff',
+    fontSize: 13,
     marginTop: 16,
-    letterSpacing: 0.3,
+    fontFamily: fontSF,
+    fontWeight: '400',
   },
 
   // Bottom Camera Controls
@@ -470,8 +483,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   galleryThumbLabel: {
-    color: 'rgba(255,255,255,0.65)',
-    fontSize: 11,
+    color: 'rgba(255,255,255,0.85)',
+    fontSize: 12,
+    fontFamily: fontSF,
     marginTop: 4,
   },
   shutterOuter: {
@@ -487,6 +501,6 @@ const styles = StyleSheet.create({
     width: 58,
     height: 58,
     borderRadius: 29,
-    backgroundColor: '#fff',
+    backgroundColor: colors.paleMint,
   },
 });

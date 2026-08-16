@@ -6,9 +6,13 @@ export class ManualUploadSource implements DetectionSource {
   async submit(imageUri: string): Promise<DetectionEvent> {
     const apiResponse = await detectImage(imageUri);
 
+    const rawPred = (apiResponse.prediction || '').trim().toLowerCase();
+
+    // Strictly check if backend returned monkey (and not "Not a Monkey")
     const isMonkey =
-      apiResponse.prediction.toLowerCase().includes('monkey') &&
-      !apiResponse.prediction.toLowerCase().includes('not');
+      rawPred.includes('monkey') &&
+      !rawPred.includes('not') &&
+      !rawPred.includes('no');
 
     const verdict: VerdictType = isMonkey ? 'MONKEY_DETECTED' : 'NO_MONKEY';
 

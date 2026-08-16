@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { VerdictType } from '../types/DetectionEvent';
+import { fontSF } from '../theme/typography';
 import { colors } from '../theme/colors';
 
 interface VerdictBadgeProps {
@@ -13,32 +14,33 @@ export const VerdictBadge: React.FC<VerdictBadgeProps> = ({ verdict, size = 'lar
 
   const config = isMonkey
     ? {
-        icon: '⚠️',
-        title: 'Primate Detected',
-        sub: 'Intrusion confirmed — take action',
-        bgColor: 'rgba(201, 134, 26, 0.12)',
-        borderColor: colors.borderThin,
-        titleColor: colors.amberLight,
-        subColor: colors.amberAccent,
-        pillBg: colors.amberGlow,
+        tag: 'INTRUSION DETECTED',
+        title: 'Intrusion by Primate Detected',
+        sub: 'Intrusion confirmed — Primate detected',
+        bgColor: 'rgba(64, 145, 108, 0.16)',
+        borderColor: colors.midGreen,
+        titleColor: colors.deepGreen,
+        subColor: colors.midGreen,
+        dotColor: colors.midGreen,
       }
     : {
-        icon: '✅',
-        title: 'Area Clear',
-        sub: 'No primate activity detected',
-        bgColor: 'rgba(74, 144, 226, 0.10)',
-        borderColor: colors.borderClear,
-        titleColor: colors.coldBlueLight,
-        subColor: colors.coldBlue,
-        pillBg: colors.coldBlueGlow,
+        tag: 'AREA CLEAR',
+        title: 'Safe',
+        sub: 'No primate detected — Area safe',
+        bgColor: 'rgba(216, 243, 220, 0.60)',
+        borderColor: colors.mint,
+        titleColor: colors.deepGreen,
+        subColor: colors.olive,
+        dotColor: colors.mint,
       };
 
   const isLarge = size === 'large';
 
   return (
     <View style={[styles.container, { backgroundColor: config.bgColor, borderColor: config.borderColor }]}>
-      <View style={[styles.iconPill, { backgroundColor: config.pillBg }]}>
-        <Text style={styles.icon}>{config.icon}</Text>
+      <View style={styles.badgeTopRow}>
+        <View style={[styles.dot, { backgroundColor: config.dotColor }]} />
+        <Text style={[styles.tagText, { color: config.dotColor }]}>{config.tag}</Text>
       </View>
       <Text style={[styles.title, { color: config.titleColor, fontSize: isLarge ? 22 : 16 }]}>
         {config.title}
@@ -50,32 +52,47 @@ export const VerdictBadge: React.FC<VerdictBadgeProps> = ({ verdict, size = 'lar
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 18,
+    borderRadius: 16,
     borderWidth: 1.5,
     alignItems: 'center',
-    paddingVertical: 22,
-    paddingHorizontal: 24,
+    paddingVertical: 18,
+    paddingHorizontal: 20,
     marginBottom: 16,
   },
-  iconPill: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+  badgeTopRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 12,
+    gap: 6,
+    marginBottom: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.70)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(107, 112, 92, 0.15)',
   },
-  icon: { fontSize: 26 },
-  title: {
-    fontFamily: 'Outfit_700Bold',
+  dot: {
+    width: 7,
+    height: 7,
+    borderRadius: 3.5,
+  },
+  tagText: {
+    fontFamily: fontSF,
+    fontSize: 11,
     fontWeight: '700',
-    letterSpacing: 0.3,
+    letterSpacing: 1,
+  },
+  title: {
+    fontFamily: fontSF,
+    fontWeight: '700',
+    letterSpacing: -0.3,
     marginBottom: 4,
     textAlign: 'center',
   },
   sub: {
+    fontFamily: fontSF,
     fontSize: 13,
-    fontFamily: 'Outfit_400Regular',
+    fontWeight: '400',
     textAlign: 'center',
   },
 });

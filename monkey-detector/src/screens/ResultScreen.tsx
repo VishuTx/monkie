@@ -5,7 +5,9 @@ import { BlurView } from 'expo-blur';
 import { DetectionEvent } from '../types/DetectionEvent';
 import { VerdictBadge } from '../components/VerdictBadge';
 import { ConfidenceMeter } from '../components/ConfidenceMeter';
+import { BackButton } from '../components/BackButton';
 import { saveDetectionEvent } from '../utils/storage';
+import { fontSF } from '../theme/typography';
 import { colors } from '../theme/colors';
 
 interface ResultScreenProps {
@@ -35,28 +37,30 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
-        {/* Header */}
-        <View style={styles.header}>
+        {/* Top Bar with Global BackButton */}
+        <View style={styles.topBar}>
+          <BackButton onPress={onSaveAndClose} title="Back" />
           <Text style={styles.headerLabel}>DETECTION COMPLETE</Text>
-          <Text style={styles.headerTitle}>Scan Result</Text>
         </View>
 
-        {/* Verdict */}
+        {/* Title */}
+        <Text style={styles.headerTitle}>Scan Analysis Result</Text>
+
+        {/* Verdict Badge */}
         <VerdictBadge verdict={event.verdict} size="large" />
 
         {/* Confidence Meter */}
         <View style={styles.meterPanel}>
-          <BlurView intensity={25} tint="dark" style={StyleSheet.absoluteFill} />
-          <View style={styles.panelHighlight} />
+          <BlurView intensity={35} tint="light" style={StyleSheet.absoluteFill} />
           <View style={styles.meterContent}>
             <Text style={styles.meterLabel}>Confidence Score</Text>
             <ConfidenceMeter confidence={event.confidence} isMonkey={isMonkey} size={175} />
           </View>
         </View>
 
-        {/* Image Preview */}
+        {/* Image Preview & Metrics */}
         <View style={styles.imagePanel}>
-          <BlurView intensity={25} tint="dark" style={StyleSheet.absoluteFill} />
+          <BlurView intensity={35} tint="light" style={StyleSheet.absoluteFill} />
           <View style={styles.imageContainer}>
             <Image source={{ uri: event.imageUri }} style={styles.imagePreview} resizeMode="cover" />
           </View>
@@ -100,35 +104,43 @@ const metricStyles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,0.05)',
+    borderBottomColor: 'rgba(107, 112, 92, 0.15)',
   },
-  label: { fontSize: 13, fontFamily: 'Outfit_400Regular', color: colors.textSecondary },
+  label: { fontFamily: fontSF, fontSize: 13, fontWeight: '400', color: colors.olive },
   value: {
+    fontFamily: fontSF,
     fontSize: 13,
-    fontFamily: 'Outfit_600SemiBold',
-    color: colors.textPrimary,
-    maxWidth: '55%',
+    fontWeight: '600',
+    color: colors.deepGreen,
+    maxWidth: '60%',
     textAlign: 'right',
   },
 });
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: colors.background },
-  scrollContent: { padding: 20, paddingBottom: 50 },
+  scrollContent: { paddingHorizontal: 20, paddingTop: 14, paddingBottom: 40 },
 
-  header: { marginBottom: 20 },
+  topBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
   headerLabel: {
-    fontSize: 10,
-    fontFamily: 'Outfit_400Regular',
-    color: colors.amberAccent,
-    letterSpacing: 2.5,
-    textTransform: 'uppercase',
-    marginBottom: 6,
+    fontFamily: fontSF,
+    fontSize: 11,
+    fontWeight: '600',
+    color: colors.olive,
+    letterSpacing: 1.2,
   },
   headerTitle: {
-    fontSize: 28,
-    fontFamily: 'Outfit_700Bold',
-    color: colors.textPrimary,
+    fontFamily: fontSF,
+    fontSize: 26,
+    fontWeight: '700',
+    color: colors.deepGreen,
+    letterSpacing: -0.4,
+    marginBottom: 16,
   },
 
   // Meter panel
@@ -136,29 +148,20 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.09)',
-    backgroundColor: 'rgba(18,18,28,0.55)',
-    marginBottom: 14,
-  },
-  panelHighlight: {
-    position: 'absolute',
-    top: 0,
-    left: 20,
-    right: 20,
-    height: 1,
-    backgroundColor: 'rgba(255,255,255,0.12)',
-    zIndex: 2,
+    borderColor: 'rgba(107, 112, 92, 0.25)',
+    backgroundColor: 'rgba(216, 243, 220, 0.65)',
+    marginBottom: 16,
   },
   meterContent: {
     alignItems: 'center',
-    padding: 20,
-    zIndex: 1,
+    padding: 18,
   },
   meterLabel: {
+    fontFamily: fontSF,
     fontSize: 12,
-    fontFamily: 'Outfit_400Regular',
-    color: colors.textMuted,
-    letterSpacing: 0.5,
+    fontWeight: '600',
+    color: colors.olive,
+    letterSpacing: 1,
     marginBottom: 4,
     textTransform: 'uppercase',
   },
@@ -168,37 +171,37 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.09)',
-    backgroundColor: 'rgba(18,18,28,0.55)',
+    borderColor: 'rgba(107, 112, 92, 0.25)',
+    backgroundColor: 'rgba(216, 243, 220, 0.65)',
     marginBottom: 22,
   },
-  imageContainer: { width: '100%', height: 200 },
+  imageContainer: { width: '100%', height: 210 },
   imagePreview: { width: '100%', height: '100%' },
   metricsBlock: { padding: 16 },
 
   // Buttons
   saveBtn: {
-    backgroundColor: colors.amberAccent,
-    borderRadius: 16,
-    paddingVertical: 17,
+    backgroundColor: colors.midGreen,
+    borderRadius: 14,
+    paddingVertical: 15,
     alignItems: 'center',
     marginBottom: 12,
-    shadowColor: colors.amberAccent,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.38,
-    shadowRadius: 12,
-    elevation: 6,
+    shadowColor: colors.deepGreen,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  savedBtn: { backgroundColor: colors.coldBlueDark },
-  saveBtnText: { fontSize: 15, fontFamily: 'Outfit_700Bold', color: '#fff', letterSpacing: 0.3 },
+  savedBtn: { backgroundColor: colors.olive, opacity: 0.8 },
+  saveBtnText: { fontFamily: fontSF, fontSize: 16, fontWeight: '700', color: '#fff', letterSpacing: 0.2 },
 
   discardBtn: {
-    borderRadius: 16,
-    paddingVertical: 16,
+    borderRadius: 14,
+    paddingVertical: 15,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.10)',
-    backgroundColor: 'rgba(255,255,255,0.04)',
+    borderColor: 'rgba(107, 112, 92, 0.25)',
+    backgroundColor: 'rgba(216, 243, 220, 0.50)',
   },
-  discardBtnText: { fontSize: 15, fontFamily: 'Outfit_600SemiBold', color: colors.textSecondary },
+  discardBtnText: { fontFamily: fontSF, fontSize: 15, fontWeight: '600', color: colors.deepGreen },
 });
