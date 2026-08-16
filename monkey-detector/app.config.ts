@@ -27,6 +27,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     favicon: './assets/favicon.png',
   },
   extra: {
-    API_BASE_URL: process.env.API_BASE_URL || 'http://127.0.0.1:5000',
+    API_BASE_URL: process.env.API_BASE_URL || 'http://192.168.31.72:5000',
   },
 });

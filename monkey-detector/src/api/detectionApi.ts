@@ -4,7 +4,21 @@ import { DetectionApiResponse } from '../types/DetectionEvent';
 
 const getBaseUrl = (): string => {
   const configuredUrl = Constants.expoConfig?.extra?.API_BASE_URL;
-  return configuredUrl || 'http://127.0.0.1:5000';
+
+  if (configuredUrl && !configuredUrl.includes('127.0.0.1') && !configuredUrl.includes('localhost')) {
+    return configuredUrl;
+  }
+
+  // Automatically extract host IP from Expo's Metro connection (e.g. "192.168.31.72:8081")
+  const hostUri = Constants.expoConfig?.hostUri || (Constants as any).manifest2?.extra?.expoGo?.debuggerHost;
+  if (hostUri) {
+    const ip = hostUri.split(':')[0];
+    if (ip && ip !== 'localhost' && ip !== '127.0.0.1') {
+      return `http://${ip}:5000`;
+    }
+  }
+
+  return configuredUrl || 'http://192.168.31.72:5000';
 };
 
 export const detectImage = async (imageUri: string): Promise<DetectionApiResponse> => {
